@@ -1,0 +1,31 @@
+<%= form_for @picture, html: {multipart: true} do |f| %>
+  <% if @picture.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@picture.errors.count, "error") %> prohibited this picture from being saved:</h2>
+
+      <ul>
+      <% @picture.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+<div class="q">
+  <div class="field fonty">
+    <%= f.label :image ,"الصورة" %><br>
+    <%= f.file_field :image %>
+  </div>
+  <br></br>
+  <div class="field fonty">
+    <%= f.label :title, "عنوان الصورة" %><br>
+    <%= f.text_field :title %>
+  </div>
+  <br></br>
+
+  <div class="actions" align="right">
+    <%= f.submit "انشاء صورة", class:'fonty'%>
+  </div>
+  
+</div>
+<% end %>

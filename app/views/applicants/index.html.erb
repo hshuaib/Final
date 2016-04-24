@@ -1,0 +1,159 @@
+<br>
+<br>
+<br>
+<h2 class="fonty" align="center">قائمة المتقدمين</h2>
+<br>
+<br>
+<table class="fonty table" align="center">
+  <thead>
+
+    <tr>
+	<div class="field fonty formpad">
+        <%= form_tag applicants_path, :method => 'get' do %>
+        <%= text_field_tag :search, params[:search] %>
+        <%= submit_tag "بحث" %>
+        <% end %>
+	</div>
+	<br>
+		
+      <th class="tablespace eventheading down">الاسم</th>
+  <%#    <th>الرقم الشخصي</th>	%>
+      <th class="tablespace eventheading down">الجنسية</th>
+      <th class="tablespace eventheading down">العمر</th>
+      <th class="tablespace eventheading down">الجنس</th>
+      <th class="tablespace eventheading down">الحالة الإجتماعية</th>
+   <%#   <th>عدد الأطفال</th>  %>
+   <%#   <th>مكان السكن</th> %>
+   <%#   <th>رقم الهاتف</th> %>
+      <th class="tablespace eventheading down">الجوال</th>
+      <th class="tablespace eventheading down">نوع الإعاقة</th>
+     <%# <th class="tablespace eventheading down">التفاصيل</th>  %>
+    <%#  <th>ملاحظات</th> %>
+    <%#  <th>العمر عند الإصابة بالإعاقة</th> %>
+    <%#  <th>أسباب الإصابة</th> %>
+      <th class="tablespace eventheading down">المستوى التعليمي</th>
+    <%#  <th>الدورات</th> %>
+      <th class="tablespace eventheading down">هل تشغل وظيفة حاليًا</th>
+    <%#  <th>الوظائف التي عملت بها</th> %>
+    <%#  <th>الوظيفة التي تستطيع القيام بها</th> %>
+    <%#  <th>الوزارات/ المؤسسات المرشحة للتوظيف</th> %>
+    <%#  <th>الخبرات</th> %>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+
+<tr colspan="12">
+        <td>
+        </td>
+        <td class="filter center">
+<%= collection_select(:applicants, :name, Applicant.find_by_sql("select name from countries where name in (select nationality from applicants)"), :name, :name,{:selected => params[:nationality]},html_options = {:onchange => "on_change(0, this.value)"} ) %>
+        </td>
+		<td>
+
+        <td class="filter center">
+<%= collection_select(:applicants, :gender, Applicant.find_by_sql("select distinct gender from applicants"), :gender, :gender,{:selected => params[:gender]},html_options = {:onchange => "on_change(1, this.value)"} ) %>
+        </td>
+        <td class="filter center">
+<%= collection_select(:applicants, :status, Applicant.find_by_sql("select distinct status from applicants"), :status, :status,{:selected => params[:status]},html_options = {:onchange => "on_change(2, this.value)"} ) %>
+        </td>
+		
+		<td>
+		</td>
+				
+		        <td class="filter center">
+		<%= collection_select(:applicants, :disability, Applicant.find_by_sql("select distinct disability from applicants"), :disability, :disability,{:selected => params[:disability]},html_options = {:onchange => "on_change(3, this.value)"} ) %>
+		        </td>
+		        <td class="filter center">
+		<%= collection_select(:applicants, :education, Applicant.find_by_sql("select distinct education from applicants"), :education, :education,{:selected => params[:education]},html_options = {:onchange => "on_change(4, this.value)"} ) %>
+		        </td>
+
+</tr>
+        <script>
+        var descriptions = [
+          "nationality",
+          "gender",
+          "status",
+			"disability",
+			"education",
+			"currentJob",
+        ];
+        var vars_array = [
+          "<%= params[:nationality] %>",
+          "<%= params[:gender] %>",
+          "<%= params[:status] %>",
+		  "<%= params[:disability] %>",
+	   	  "<%= params[:education] %>",
+        ];
+        $(document).ready(function () {
+          var selectors = $(".filter > select");
+          for (var i = 0; i < selectors.length; i++) {
+            var s = vars_array[i] ? "" : "selected";
+            selectors[i].innerHTML = "<option value='' " + s + ">الكل</option>" + selectors[i].innerHTML;
+          }
+        });
+        function on_change(i, val){
+          vars_array[i] = val;
+          reload_page();
+        }
+        function reload_page() {
+          var href = "/applicants";
+          var args = "";
+          for (var i = 0; i < vars_array.length; i++) {
+            if (vars_array[i]) {
+              args += descriptions[i] + "=" + vars_array[i];
+              args += "&";
+            }
+          }
+          if (args.length > 0) {
+            if (args[args.length-1] == "&")
+              args = args.substring(0, args.length-1);
+            href = href + "?" + args;
+          }
+          window.location.href = href;
+        }
+       </script>
+ 
+        </td>
+
+        <tbody id="table">
+        </tbody>
+
+
+
+  <tbody>
+    <% @applicants.each do |applicant| %>
+      <tr>
+        <td class="tablespace fonty"><%= applicant.name %></td>
+        <%#  <td><%= applicant.QID % ></td> %>
+        <td class="tablespace fonty"> <%= applicant.nationality %></td>
+        <td class="tablespace fonty"><%= Applicant.getage(applicant.dob) %></td>
+        <td class="tablespace fonty"><%= applicant.gender %></td>
+        <td class="tablespace fonty"><%= applicant.status %></td>
+     <%#   <td><%= applicant.noOfChildren %></td> 
+     <%#   <td><%= applicant.livingArea %></td> 
+     <%#   <td><%= applicant.phoneNo %></td> 
+        <td class="tablespace fonty"><%= applicant.mobileNo %></td>
+        <td class="tablespace fonty"><%= applicant.disability %></td>
+      <%#  <td class="tablespace fonty"><%= applicant.details %></td> 
+     <%#   <td><%= applicant.notes %></td> 
+     <%#   <td><%= applicant.age %></td> 
+     <%#   <td><%= applicant.reason %></td> 
+        <td class="tablespace fonty"><%= applicant.education %></td>
+     <%#   <td><%= applicant.workshop %></td> 
+       <td class="tablespace fonty"><%= human_boolean(applicant.currentJob) %></td>
+     <%#   <td class="tablespace fonty"><%= applicant.jobDescription %></td> 
+     <%#   <td><%= applicant.abilities %></td> 
+     <%#   <td><%= applicant.preference %></td> 
+     <%#   <td><%= applicant.skills %></td> 
+        <td class="tablespace fonty"><%= link_to 'عرض', applicant %></td>
+        <td class="tablespace fonty"><%= link_to 'تعديل', edit_applicant_path(applicant) %></td>
+        <td class="tablespace fonty"><%= link_to 'مسح', applicant, method: :delete, data: { confirm: 'هل أنت متأكد؟' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'إضافة طلب توظيف', new_applicant_path, class:'fonty floatR' %>
